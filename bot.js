@@ -4,7 +4,7 @@ const { Telegraf, Markup } = require('telegraf');
 const express = require('express'); // ✅ Добавили express для веб-сервера
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const WEB_APP_URL = 'https://vercel.app';
+const WEB_APP_URL = 'https://front2-ochre.vercel.app';
 
 // Логика бота
 bot.start((ctx) => {
