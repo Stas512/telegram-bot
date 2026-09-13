@@ -1,10 +1,19 @@
-//C:\Users\Stan\Desktop\Clarens2\telegram-bot\bot.js
 require('dotenv').config();
 const { Telegraf, Markup } = require('telegraf');
-const express = require('express'); // ✅ Добавили express для веб-сервера
+const express = require('express');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const WEB_APP_URL = 'https://front2-ochre.vercel.app';
+
+// ✅ Настройте webhook для Render
+const webhookPath = `/${process.env.BOT_TOKEN}`;
+const webhookUrl = `https://telegram-bot-50n4.onrender.com${webhookPath}`;
+
+bot.telegram.setWebhook(webhookUrl).then(() => {
+  console.log('✅ Webhook установлен:', webhookUrl);
+}).catch((err) => {
+  console.error('❌ Ошибка установки webhook:', err);
+});
 
 // Логика бота
 bot.start((ctx) => {
@@ -16,22 +25,23 @@ bot.start((ctx) => {
   );
 });
 
-// ✅ СОЗДАЕМ МИНИ-СЕРВЕР ДЛЯ RENDER
-// Это нужно, чтобы Render видел, что наш сервис "жив" (Health Check)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ✅ Обработчик webhook
+app.post(webhookPath, (req, res) => {
+  bot.handleUpdate(req.body, res);
+});
+
+// Health check
 app.get('/', (req, res) => {
   res.send('Telegram Bot is running smoothly! 🚀');
 });
 
-// Запуск веб-сервера и бота
+// Запуск веб-сервера
 app.listen(PORT, () => {
   console.log(`Web server listening on port ${PORT}`);
-  
-  bot.launch()
-    .then(() => console.log('🚀 Telegram Bot successfully launched on Render!'))
-    .catch((err) => console.error('❌ Error launching bot:', err));
+  console.log('🚀 Telegram Bot successfully launched on Render!');
 });
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
