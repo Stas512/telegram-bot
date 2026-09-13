@@ -20,7 +20,7 @@ bot.start((ctx) => {
   ctx.reply(
     `Привет, ${ctx.from.first_name}!\nНажми кнопку для открытия Web App:`,
     Markup.inlineKeyboard([
-      Markup.button.webApp('🚀 Открыть Web App', WEB_APP_URL)
+      Markup.button.webApp('🚀 Открыть Web App', WEB_APP_URL, { start_param: 'auth' })
     ])
   );
 });
