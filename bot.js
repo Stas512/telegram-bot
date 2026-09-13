@@ -11,8 +11,13 @@ const webhookUrl = `https://telegram-bot-50n4.onrender.com${webhookPath}`;
 
 bot.telegram.setWebhook(webhookUrl).then(() => {
   console.log('✅ Webhook установлен:', webhookUrl);
+  // ✅ Инициализируйте botInfo
+  return bot.telegram.getMe();
+}).then((botInfo) => {
+  bot.botInfo = botInfo;
+  console.log('🤖 Bot info:', botInfo);
 }).catch((err) => {
-  console.error('❌ Ошибка установки webhook:', err);
+  console.error('❌ Ошибка инициализации бота:', err);
 });
 
 // Логика бота
@@ -20,7 +25,7 @@ bot.start((ctx) => {
   ctx.reply(
     `Привет, ${ctx.from.first_name}!\nНажми кнопку для открытия Web App:`,
     Markup.inlineKeyboard([
-      Markup.button.webApp('🚀 Открыть Web App', WEB_APP_URL, { start_param: 'auth' })
+      Markup.button.webApp('🚀 Открыть Web App', `${WEB_APP_URL}?startapp=auth`)
     ])
   );
 });
