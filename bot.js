@@ -28,12 +28,20 @@ bot.start((ctx) => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Обработчик webhook
+// ✅ Middleware для парсинга JSON
+app.use(express.json());
+
+// ✅ Обработчик webhook (только POST)
 app.post(webhookPath, (req, res) => {
+  // ✅ Проверка на пустой request (Telegram делает GET для проверки)
+  if (!req.body || !req.body.update_id) {
+    return res.status(200).send('OK');
+  }
+  
   bot.handleUpdate(req.body, res);
 });
 
-// Health check
+// Health check (GET)
 app.get('/', (req, res) => {
   res.send('Telegram Bot is running smoothly! 🚀');
 });
